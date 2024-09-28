@@ -10,10 +10,16 @@ import SwiftData
 
 @main
 struct ScorecardApp: App {
+    
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
+            Score.self,
+            Frame.self,
+            Player.self,
             Item.self,
+            Modifier.self
         ])
+        
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
 
         do {
@@ -23,10 +29,27 @@ struct ScorecardApp: App {
         }
     }()
 
-    var body: some Scene {
-        WindowGroup {
-            ContentView()
+    func determineStartingWindow() -> Item?{
+        let descriptor = FetchDescriptor<Item>()
+        var items = [Item]()
+        
+        do {
+            items = try ModelContext(sharedModelContainer).fetch(descriptor)
+        } catch {
+            fatalError("ya fucked up your window logic: \(error)")
         }
-        .modelContainer(sharedModelContainer)
+        
+        for item in items {
+            if(!item.isFinished){
+                return item
+            }
+        }
+        return nil
+    }
+    
+    var body: some Scene {
+        WindowGroup{
+            HomePage(currentGame: determineStartingWindow())
+        }.modelContainer(sharedModelContainer)
     }
 }
