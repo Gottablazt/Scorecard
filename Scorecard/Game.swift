@@ -8,18 +8,32 @@
 import Foundation
 import SwiftData
 
+
+
 @Model
-final class Item {
+final class Game : Comparable{
+    static func < (lhs: Game, rhs: Game) -> Bool {
+        if(lhs.timestamp.timeIntervalSince(rhs.timestamp).isLess(than: 0.0)){
+            return true
+        }
+        return false
+    }
+    
     @Relationship(.unique, inverse: \Frame.game) var frames : [Frame]
     @Relationship(.unique, inverse: \Player.games) var players : [Player]
+    @Relationship var modifiers : [Modifier]
+    
     let timestamp : Date = Date()
+    var name : String = "Course Name"
     var descriptor : String = ""
     var isFinished : Bool = false
     var winner : String = ""
     var finalScoreString = ""
-    init(frames : [Frame] = [Frame](), players : [Player] = [Player]()) {
+    
+    init(frames : [Frame] = [Frame](), players : [Player] = [Player](), modifiers : [Modifier] = [Modifier]()) {
         self.players = players
         self.frames = frames
+        self.modifiers = modifiers
     }
 }
 
@@ -36,11 +50,11 @@ final class Frame : Comparable{
     @Relationship(inverse: \Score.frame) var scores : [Score]
     @Relationship var modifiers : [Modifier]
     
-    var game : Item?
+    var game : Game?
     var holeNumber : Int
     
     
-    init(holeNumber : Int = 0, players : [Player] = [], modifiers : [Modifier] = [], scores : [Score] = [], game : Item? = nil) {
+    init(holeNumber : Int = 0, players : [Player] = [], modifiers : [Modifier] = [], scores : [Score] = [], game : Game? = nil) {
         self.holeNumber = holeNumber
         self.modifiers = modifiers
         self.players = players
@@ -51,32 +65,37 @@ final class Frame : Comparable{
 
 @Model
 final class Score{
+    @Relationship var modifiers : [Modifier]
     
     var frame : Frame?
     var player : Player?
     var score : Int
     
-    init(frame: Frame? = nil, player: Player? = nil, score: Int = 0) {
+    init(frame: Frame? = nil, player: Player? = nil, score: Int = 0, modifiers : [Modifier] = []) {
         self.frame = frame
         self.player = player
         self.score = score
+        self.modifiers = modifiers
     }
 }
 
 @Model
 final class Player : Identifiable{
+    @Relationship var modifiers : [Modifier]
     
-    var games : [Item]
+    
+    var games : [Game]
     
     var name : String
   
     
-    init(name: String = "PlayerName", games : [Item] = []) {
+    init(name: String = "PlayerName", games : [Game] = [], modifiers : [Modifier] = []) {
         self.name = name
         self.games = games
-        
+        self.modifiers = modifiers
     }
 }
+
 enum ModifierType: Codable, Equatable {
     case Arithmetic(value : Int)
     case String(value : String)
@@ -84,12 +103,7 @@ enum ModifierType: Codable, Equatable {
 }
 
 @Model
-final class Modifier {
-    static let teeboxName = "Teebox"
-    static let parName = "Par"
-    static let holeName = "Hole"
-    
-    
+final class Modifier : Equatable {
     
     var modifierType : ModifierType
     var name : String
@@ -98,6 +112,21 @@ final class Modifier {
         self.modifierType = modifierType
         self.name = name
     }
+}
+
+struct ModifierNames {
+    static let teeboxPrototypeName = "teeboxPrototype"
+    static let teeboxName = "teebox"
+    static let holeName = "hole"
+    static let parName = "par"
+    static let frameModArray = [teeboxName, holeName, parName]
+    
+    
+    static let averageStrokesPerHoleName = "avg strokes/hole"
+    static let averageScorePerHoleName = "avg score/hole"
+    static let averageScorePerGameName = "avg score/game"
+    static let playerStatArray = [averageStrokesPerHoleName, averageScorePerHoleName, averageScorePerGameName]
+        
 }
 
 

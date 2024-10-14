@@ -3,19 +3,22 @@
 //  Scorecard
 //
 //  Created by Brett Garon on 9/28/24.
-//
+//  MVP 0.0.1 10/3/24
 
 import SwiftUI
 
-struct ModifierStringPopup: View {
+struct FrameModifierStringPopup: View {
     @Environment(\.dismiss) var dismiss
     @Environment(\.modelContext) private var modelContext
     
-    var modifier : Modifier
     @State var stringValue : String
 
+    var modifier : Modifier
+    
     init(modifier : Modifier){
+        
         self.modifier = modifier
+        
         switch(modifier.modifierType){
             case .String(let value):
                 _stringValue = State(initialValue: value)
@@ -24,18 +27,23 @@ struct ModifierStringPopup: View {
                 _stringValue = State(initialValue: "")
 
             }
+        
     }
+    
     var body: some View {
+        
         TextField(modifier.name, text: $stringValue)
+            .multilineTextAlignment(.center)
             .onSubmit {
                 modifier.modifierType = .String(value: stringValue)
                 modelContext.insert(modifier)
                 dismiss()
             }
-            .multilineTextAlignment(.center)
+        
     }
+    
 }
 
 #Preview {
-    ModifierStringPopup(modifier: Modifier(modifierType: .String(value: "hi"), name: "teebox"))
+    FrameModifierStringPopup(modifier: Modifier(modifierType: .String(value: "hi"), name: "teebox"))
 }
