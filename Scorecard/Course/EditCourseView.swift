@@ -3,16 +3,35 @@
 //  Scorecard
 //
 //  Created by Brett Garon on 10/1/24.
-//
+//  MVP 0.0.1 10/3/24
 
 import SwiftUI
 
 struct EditCourseView: View {
+    
+    var currentCourse : Course
+    
+    init(currentCourse: Course) {
+        self.currentCourse = currentCourse
+    }
+    
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        
+        ScrollView(.horizontal){
+            
+            LazyHStack{
+                
+                ForEach(currentCourse.frames.sorted(by: <)){
+                    frame in FrameModifierStack(currentFrame: frame)
+                }
+                
+            }
+            
+        }
+        
     }
 }
 
 #Preview {
-    EditCourseView()
+    EditCourseView(currentCourse: Course())
 }

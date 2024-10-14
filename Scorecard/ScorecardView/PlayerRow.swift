@@ -8,11 +8,15 @@
 import SwiftUI
 
 struct PlayerRow: View {
+    var player : Player
+    init(player: Player) {
+        self.player = player
+    }
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        ScorecardRectangle(text: player.name)
     }
 }
 
 #Preview {
-    PlayerRow()
+    PlayerRow(player: Player())
 }

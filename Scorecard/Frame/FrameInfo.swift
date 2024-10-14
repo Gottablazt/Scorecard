@@ -3,17 +3,19 @@
 //  Scorecard
 //
 //  Created by Brett Garon on 9/9/24.
-//
+//  MVP 0.0.1 10/3/24
 
 import SwiftUI
 import SwiftData
 
 struct FrameInfo: View {
     @Environment(\.modelContext) private var modelContext
+    
     @Query(sort: \Frame.holeNumber) private var frames : [Frame]
     
     var currentFrame : Frame = Frame()
     var players : [Player] = [Player]()
+
     
     init(selectedFrame : Frame){
         currentFrame = selectedFrame
@@ -23,38 +25,28 @@ struct FrameInfo: View {
     init(frameIndex : Int){
         currentFrame = frames[frameIndex]
     }
-    
-    func addTeebox(){
-        
-    }
-    func addHole(){
-        
-    }
-    func setDefaultPar(){
-        
-    }
-    func addPar(){
-        
-    }
         
     var body: some View {
-        
+        Spacer()
         Text("Hole Number")
-        Text(currentFrame.holeNumber.description)
-        VStack{
-            ForEach(currentFrame.modifiers){modifier in
-                ModifierView(modifier: modifier)
-            }
-        }
+        FrameModifierStack(currentFrame: currentFrame)
+        
         Text("Scores")
+        
         HStack{
-            ForEach(currentFrame.scores) { score in
+            
+            ForEach(currentFrame.scores.sorted(by: >)) { score in
+                
                 VStack{
                     ScoreInfo(score: score)
                 }
+                
             }
+            
         }
+        
         Spacer()
+        
     }
     
     

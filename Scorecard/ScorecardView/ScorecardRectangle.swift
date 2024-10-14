@@ -8,11 +8,21 @@
 import SwiftUI
 
 struct ScorecardRectangle: View {
+    var text : String
+    init(text: String) {
+        self.text = text
+    }
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        Rectangle()
+            .frame(width: 75, height: 50)
+            .foregroundStyle(.clear)
+            .border(.black, width: 5)
+            .overlay(content: {
+                Text(text)
+            })
     }
 }
 
 #Preview {
-    ScorecardRectangle()
+    ScorecardRectangle(text: "Hello World")
 }

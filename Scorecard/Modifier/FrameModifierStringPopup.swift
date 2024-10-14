@@ -13,9 +13,9 @@ struct FrameModifierStringPopup: View {
     
     @State var stringValue : String
 
-    var modifier : Modifier
+    var modifier : FrameModifier
     
-    init(modifier : Modifier){
+    init(modifier : FrameModifier){
         
         self.modifier = modifier
         
@@ -45,5 +45,5 @@ struct FrameModifierStringPopup: View {
 }
 
 #Preview {
-    FrameModifierStringPopup(modifier: Modifier(modifierType: .String(value: "hi"), name: "teebox"))
+    FrameModifierStringPopup(modifier: FrameModifier(modifierType: .String(value: "hi"), name: "teebox"))
 }

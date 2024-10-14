@@ -16,9 +16,9 @@ struct FrameModifierView: View {
     @State var isEditingString = false
     @State var isEditingTeebox = false
     
-    var modifier : Modifier
+    var modifier : FrameModifier
     
-    init(modifier: Modifier) {
+    init(modifier: FrameModifier) {
         self.modifier = modifier
     }
     
@@ -34,7 +34,7 @@ struct FrameModifierView: View {
                 
                 case .String:
                 
-                    if(modifier.name == ModifierNames.teeboxName){
+                    if(modifier.name == FrameModifierNames.teeboxName){
                         isEditingTeebox.toggle()
                     } else {
                         isEditingString.toggle()
@@ -52,12 +52,12 @@ struct FrameModifierView: View {
         })
         
         .popover(isPresented: $isEditingInt, content: {
-            ModifierIntPopup(modifier: modifier)
+            FrameModifierIntPopup(modifier: modifier)
                 .presentationCompactAdaptation(.popover)
         })
         
         .popover(isPresented: $isEditingString, content: {
-            ModifierStringPopup(modifier: modifier)
+            FrameModifierStringPopup(modifier: modifier)
                 .presentationCompactAdaptation(.popover)
         })
         
@@ -76,12 +76,13 @@ struct FrameModifierView: View {
             case .Double(let value):
                 return value.description
             
-        }
-        
+            case .Bool(value: let value):
+                return value.description
+            }
     }
     
 }
 
 #Preview {
-    FrameModifierView(modifier: Modifier(modifierType: .Arithmetic(value: 3), name: "Par"))
+    FrameModifierView(modifier: FrameModifier(modifierType: .Arithmetic(value: 3), name: "Par"))
 }

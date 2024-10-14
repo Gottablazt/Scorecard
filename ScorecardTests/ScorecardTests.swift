@@ -17,7 +17,13 @@ final class ScorecardTests: XCTestCase {
     override func setUpWithError() throws {
         
         let config = ModelConfiguration(isStoredInMemoryOnly: true)
-        let container = try ModelContainer(for: Frame.self, Item.self, Player.self, Score.self, Modifier.self, configurations: config)
+        let container = try ModelContainer(for:
+            Score.self,                     ScoreModifier.self,
+            Frame.self,                     FrameModifier.self,
+            Player.self,                    PlayerModifier.self,
+            Game.self,                      GameModifier.self,
+            Course.self,                    CourseModifier.self
+        )
         context = container.mainContext
         // Put setup code here. This method is called before the invocation of each test method in the class.
     }
@@ -49,7 +55,7 @@ final class ScorecardTests: XCTestCase {
         let newPlayer = Player()
         context?.insert(newPlayer)
         
-        let newGame = Item()
+        let newGame = Game()
         context?.insert(newGame)
         
         newGame.players.append(newPlayer)
@@ -57,7 +63,7 @@ final class ScorecardTests: XCTestCase {
         
         
         
-        let gameDescriptor = FetchDescriptor<Item>()
+        let gameDescriptor = FetchDescriptor<Game>()
         let otherGame = try! context?.fetch(gameDescriptor).first
         let gamePlayer = otherGame?.players.first
         
@@ -170,7 +176,7 @@ final class ScorecardTests: XCTestCase {
         let newFrame = Frame()
         context?.insert(newFrame)
         
-        let modifier = Modifier(modifierType: .Arithmetic(value: 3), name: "Par")
+        let modifier = FrameModifier(modifierType: .Arithmetic(value: 3), name: "Par")
         context?.insert(modifier)
         
         newFrame.modifiers.append(modifier)
@@ -187,16 +193,16 @@ final class ScorecardTests: XCTestCase {
         let newFrame = Frame()
         context?.insert(newFrame)
         
-        let modifier = Modifier(modifierType: .Arithmetic(value: 3), name: "Par")
+        let modifier = FrameModifier(modifierType: .Arithmetic(value: 3), name: "Par")
         context?.insert(modifier)
         
         newFrame.modifiers.append(modifier)
         
-        let modifier2 = Modifier(modifierType: .String(value: "Door"), name: "Teebox")
+        let modifier2 = FrameModifier(modifierType: .String(value: "Door"), name: "Teebox")
         context?.insert(modifier2)
         newFrame.modifiers.append(modifier2)
         
-        let modifier3 = Modifier(modifierType: .Arithmetic(value: 2), name: "Hole")
+        let modifier3 = FrameModifier(modifierType: .Arithmetic(value: 2), name: "Hole")
         context?.insert(modifier3)
         newFrame.modifiers.append(modifier3)
         
@@ -225,7 +231,7 @@ final class ScorecardTests: XCTestCase {
         let newFrame = Frame()
         context?.insert(newFrame)
         
-        let newGame = Item()
+        let newGame = Game()
         context!.insert(newGame)
         newFrame.game = newGame
         
@@ -242,14 +248,14 @@ final class ScorecardTests: XCTestCase {
     //GameTests
     
     func testEmptyGameCreation() throws {
-        let newGame = Item()
+        let newGame = Game()
         context?.insert(newGame)
         
         XCTAssert(context?.insertedModelsArray.count == 1 && context?.insertedModelsArray.first?.id == newGame.id)
     }
     
     func testGameCreatedWithFrameArrayHasFrames() throws {
-        let newGame = Item()
+        let newGame = Game()
         context!.insert(newGame)
         
         let frames = [Frame()]
@@ -260,7 +266,7 @@ final class ScorecardTests: XCTestCase {
             newGame.frames.append(frame)
         }
         
-        let descriptor = FetchDescriptor<Item>()
+        let descriptor = FetchDescriptor<Game>()
         
         
         let otherGame = try! context?.fetch(descriptor).first
@@ -269,7 +275,7 @@ final class ScorecardTests: XCTestCase {
     }
     
     func testGameCreatedWithPlayerArrayHasPlayers() throws {
-        let newGame = Item()
+        let newGame = Game()
         context!.insert(newGame)
         
         let players = [Player()]
@@ -280,7 +286,7 @@ final class ScorecardTests: XCTestCase {
             newGame.players.append(player)
         }
         
-        let descriptor = FetchDescriptor<Item>()
+        let descriptor = FetchDescriptor<Game>()
         
         
         let otherGame = try! context?.fetch(descriptor).first
@@ -289,7 +295,7 @@ final class ScorecardTests: XCTestCase {
     }
     
     func testGameCreatedWithBothPlayersAndFramesHasBoth() throws {
-        let newGame = Item()
+        let newGame = Game()
         context!.insert(newGame)
         
         let players = [Player()]
@@ -307,7 +313,7 @@ final class ScorecardTests: XCTestCase {
             newGame.frames.append(frame)
         }
         
-        let descriptor = FetchDescriptor<Item>()
+        let descriptor = FetchDescriptor<Game>()
         
         
         let otherGame = try! context?.fetch(descriptor).first
@@ -316,7 +322,7 @@ final class ScorecardTests: XCTestCase {
     }
     
     func testGameWithPlayersAndFramesWhereFramesHasPlayers() throws {
-        let newGame = Item()
+        let newGame = Game()
         context!.insert(newGame)
         
         let players = [Player()]
@@ -337,7 +343,7 @@ final class ScorecardTests: XCTestCase {
             newGame.frames.append(frame)
         }
         
-        let descriptor = FetchDescriptor<Item>()
+        let descriptor = FetchDescriptor<Game>()
         
         
         let otherGame = try! context?.fetch(descriptor).first
@@ -348,7 +354,7 @@ final class ScorecardTests: XCTestCase {
     }
     
     func testGameWithFrameAppendedAfterCreationHasExtraFrame() throws {
-        let newGame = Item()
+        let newGame = Game()
         context!.insert(newGame)
         
         let players = [Player()]
@@ -374,7 +380,7 @@ final class ScorecardTests: XCTestCase {
         newGame.frames.append(newFrame)
         
         
-        let descriptor = FetchDescriptor<Item>()
+        let descriptor = FetchDescriptor<Game>()
         
         
         let otherGame = try! context?.fetch(descriptor).first
@@ -385,10 +391,10 @@ final class ScorecardTests: XCTestCase {
     }
     
     func testGameWithPlayersAndFramesWhereFramesHasPlayersAndScores() throws {
-        let newGame = Item()
+        let newGame = Game()
         context!.insert(newGame)
         
-        let descriptor = FetchDescriptor<Item>()
+        let descriptor = FetchDescriptor<Game>()
         
         
         let otherGame = try! context?.fetch(descriptor).first
@@ -441,7 +447,7 @@ final class ScorecardTests: XCTestCase {
     }
     
     func testFullGameWithTieBreakEvent() throws {
-        let newGame = Item()
+        let newGame = Game()
         context!.insert(newGame)
         
         
@@ -510,17 +516,17 @@ final class ScorecardTests: XCTestCase {
     }
     
     func testModifierCreation() throws {
-        let modifier = Modifier(modifierType: .Arithmetic(value: 1), name: "Hole")
+        let modifier = FrameModifier(modifierType: .Arithmetic(value: 1), name: "Hole")
         context?.insert(modifier)
         
         XCTAssert(context?.insertedModelsArray.first?.id == modifier.id)
     }
     
     func testModifierHoldsCorrectIntegerValue() throws {
-        let modifier = Modifier(modifierType: .Arithmetic(value: 1), name: "Hole")
+        let modifier = FrameModifier(modifierType: .Arithmetic(value: 1), name: "Hole")
         context?.insert(modifier)
         
-        let descriptor = FetchDescriptor<Modifier>()
+        let descriptor = FetchDescriptor<FrameModifier>()
         
         
         let otherModifier = try! context?.fetch(descriptor).first
@@ -530,10 +536,10 @@ final class ScorecardTests: XCTestCase {
     }
     
     func testModifierHoldsCorrectStringValue() throws {
-        let modifier = Modifier(modifierType: .String(value: "Door"), name: "TeeBox")
+        let modifier = FrameModifier(modifierType: .String(value: "Door"), name: "TeeBox")
         context?.insert(modifier)
         
-        let descriptor = FetchDescriptor<Modifier>()
+        let descriptor = FetchDescriptor<FrameModifier>()
         
         
         let otherModifier = try! context?.fetch(descriptor).first
@@ -543,10 +549,10 @@ final class ScorecardTests: XCTestCase {
     }
     
     func testModifierHoldsCorrectDoubleValue() throws {
-        let modifier = Modifier(modifierType: .Double(value: 0.0), name: "Handicap")
+        let modifier = FrameModifier(modifierType: .Double(value: 0.0), name: "Handicap")
         context?.insert(modifier)
         
-        let descriptor = FetchDescriptor<Modifier>()
+        let descriptor = FetchDescriptor<FrameModifier>()
         
         let otherModifier = try! context?.fetch(descriptor).first
         
@@ -555,10 +561,10 @@ final class ScorecardTests: XCTestCase {
     }
     
     func testStringModifierTypeCanCompareToLiteral() throws {
-        let modifier = Modifier(modifierType: .String(value: "Door"), name: "TeeBox")
+        let modifier = FrameModifier(modifierType: .String(value: "Door"), name: "TeeBox")
         context?.insert(modifier)
         
-        let descriptor = FetchDescriptor<Modifier>()
+        let descriptor = FetchDescriptor<FrameModifier>()
         
         
         let otherModifier = try! context?.fetch(descriptor).first
@@ -568,10 +574,10 @@ final class ScorecardTests: XCTestCase {
     }
     
     func testIntModifierTypeCanCompareToLiteral() throws {
-        let modifier = Modifier(modifierType: .Arithmetic(value: 1), name: "")
+        let modifier = FrameModifier(modifierType: .Arithmetic(value: 1), name: "")
         context?.insert(modifier)
         
-        let descriptor = FetchDescriptor<Modifier>()
+        let descriptor = FetchDescriptor<FrameModifier>()
         
         
         let otherModifier = try! context?.fetch(descriptor).first
@@ -581,10 +587,10 @@ final class ScorecardTests: XCTestCase {
     }
     
     func testDoubleModifierTypeCanCompareToLiteral() throws {
-        let modifier = Modifier(modifierType: .Double(value: 0.0), name: "")
+        let modifier = FrameModifier(modifierType: .Double(value: 0.0), name: "")
         context?.insert(modifier)
         
-        let descriptor = FetchDescriptor<Modifier>()
+        let descriptor = FetchDescriptor<FrameModifier>()
         
         
         let otherModifier = try! context?.fetch(descriptor).first
@@ -594,10 +600,10 @@ final class ScorecardTests: XCTestCase {
     }
     
     func testModifiersOfIntAndDoubleAreNotEqual() throws {
-        let modifier = Modifier(modifierType: .Arithmetic(value: 1), name: "")
+        let modifier = FrameModifier(modifierType: .Arithmetic(value: 1), name: "")
         context?.insert(modifier)
         
-        let descriptor = FetchDescriptor<Modifier>()
+        let descriptor = FetchDescriptor<FrameModifier>()
         
         
         let otherModifier = try! context?.fetch(descriptor).first
@@ -607,10 +613,10 @@ final class ScorecardTests: XCTestCase {
     }
     
     func testModifiersOfIntAndIntAreNotEqual() throws {
-        let modifier = Modifier(modifierType: .Arithmetic(value: 1), name: "")
+        let modifier = FrameModifier(modifierType: .Arithmetic(value: 1), name: "")
         context?.insert(modifier)
         
-        let descriptor = FetchDescriptor<Modifier>()
+        let descriptor = FetchDescriptor<FrameModifier>()
         
         
         let otherModifier = try! context?.fetch(descriptor).first
@@ -620,10 +626,10 @@ final class ScorecardTests: XCTestCase {
     }
     
     func testModifiersOfStringAndIntAreNotEqual() throws {
-        let modifier = Modifier(modifierType: .String(value: "1"), name: "")
+        let modifier = FrameModifier(modifierType: .String(value: "1"), name: "")
         context?.insert(modifier)
         
-        let descriptor = FetchDescriptor<Modifier>()
+        let descriptor = FetchDescriptor<FrameModifier>()
         
         
         let otherModifier = try! context?.fetch(descriptor).first

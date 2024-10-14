@@ -11,36 +11,32 @@ import SwiftData
 struct PlayerSelector: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) var dismiss
-    
+    @Query private var items : [Item]
     
     @Query private var players : [Player]
     
-    @State var gamePlayers : [Player]
+    @State var possiblePlayers : [Player]
     
-    //var currentItem : Item
+
+    var newItem = Item()
 
     init(currentItem : Item){
-        _gamePlayers = State(initialValue: currentItem.players)
-        //self.currentItem = currentItem
+        self.newItem = currentItem
+        _possiblePlayers = State(initialValue: .init(repeating: Player(), count: 4))
     }
     
     var body: some View {
-        VStack{
-            Button("Done"){
-                //currentItem.players = gamePlayers
-                dismiss()
-            }
-            ForEach($gamePlayers){
-                player in
-                Picker(selection: player, label: Text("Select Player")){
-                    ForEach(players, id: \.id){
-                        option in
-                        Text(option.name).tag(option)
-                    }
-                }
-            }
+        Button{
+            modelContext.insert(newItem)
+            dismiss()
+        } label: {
+            Text("Finalize Game")
         }
+        
+        
     }
+    
+    
 }
 
 #Preview {

@@ -14,11 +14,11 @@ struct FrameModifierIntPopup: View {
     
     @State var intValue : Int
     
-    let numericOptions = [Int].init(0...4)
+    let numericOptions = [Int].init(0...5)
     
-    var selectedMod : Modifier
+    var selectedMod : FrameModifier
     
-    init(modifier : Modifier) {
+    init(modifier : FrameModifier) {
         selectedMod = modifier
         
         switch(modifier.modifierType){
@@ -60,5 +60,5 @@ struct FrameModifierIntPopup: View {
 }
 
 #Preview {
-    FrameModifierIntPopup(modifier: Modifier(modifierType: .Arithmetic(value: 0), name: "teebox"))
+    FrameModifierIntPopup(modifier: FrameModifier(modifierType: .Arithmetic(value: 0), name: "teebox"))
 }
